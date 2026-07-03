@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import styles from "./TransformationSection.module.css";
+import styles from "./Transformationsection.module.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
