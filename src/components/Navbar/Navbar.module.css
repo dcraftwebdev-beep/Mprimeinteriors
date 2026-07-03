@@ -1,0 +1,353 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 130; /* was 100 — header now above .nav overlay (98) */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px clamp(20px, 5vw, 64px) 0;
+  background: transparent;
+  pointer-events: none; /* let clicks pass through transparent header… */
+}
+
+.navbar > * {
+  pointer-events: auto; /* …but keep brand + hamburger clickable */
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  font-style: italic;
+  color: #fff;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+
+.brandMark {
+  flex-shrink: 0;
+}
+
+/* ── Hamburger ── */
+.hamburger {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+  z-index: 140;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.hamburger:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.hamburger:active {
+  transform: scale(0.98);
+}
+
+.hamburgerOpen {
+  background: #000 !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  border-radius: 4px !important;
+  padding: 10px;
+}
+
+.hamburger svg {
+  width: 20px;
+  height: 20px;
+}
+
+.bar {
+  transform-origin: center;
+  transition: stroke 0.3s ease;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* ── Overlay scaffold ── */
+.nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: auto;
+  width: min(440px, 94vw);
+  z-index: 98;
+  padding: clamp(10px, 2vw, 18px);
+  pointer-events: none;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.6vw, 4px);
+}
+
+.navBg {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 14, 11, 0.55);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  z-index: -1;
+}
+
+.navPanel {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Top panel — paper, link list */
+.navTop {
+  flex: 1;
+  width: 100%;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  transform: translateX(101%);
+  display: flex;
+  flex-direction: column;
+  padding: 52px 32px 30px;
+  z-index: 3;
+  border: 1px solid var(--color-border);
+}
+
+/* Middle panel — copper, availability card */
+.navMiddle {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(118deg, var(--color-copper) 12%, var(--color-copper-light) 88%);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 26px 32px;
+  z-index: 2;
+  min-height: 180px;
+  border: 1px solid var(--color-copper-dark);
+}
+
+.navMiddleHeader {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  opacity: 0.7;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.navMiddleCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navMiddleBadge {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navMiddleBadge svg {
+  width: 22px;
+  height: 22px;
+}
+
+.navMiddleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.navMiddleTitle {
+  /* font-family: var(--font-display); */
+  font-weight: 600;
+  font-size: clamp(1.05rem, 3vw, 1.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.navMiddleDesc {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  line-height: 1.45;
+}
+
+.navMiddleActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.navMiddleActions button {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  background: var(--color-ink);
+  color: var(--color-copper-light);
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.navMiddleActions button:hover {
+  transform: translateY(-1px);
+  background: #000;
+}
+
+/* Bottom panel — dark, CTA + socials */
+.navBottom {
+  position: relative;
+  min-height: 120px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--color-ink) 0%, #211f18 100%);
+  color: rgba(255, 255, 255, 0.6);
+  transform: translateX(101%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 26px 32px;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.navList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.navItem {
+  overflow: hidden;
+}
+
+.navLink {
+  display: block;
+  text-decoration: none;
+  color: var(--color-ink);
+  padding: 11px 0;
+  font-family: var(--font);
+  font-size: clamp(1rem, 3vw, 1rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid var(--color-border);
+  transition: color 0.25s ease, padding-left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.navLink:hover {
+  color: var(--color-copper-dark);
+  padding-left: 10px;
+}
+
+.navMeta {
+  margin-top: auto;
+  padding-top: 20px;
+  font-size: 0.8rem;
+  color: var(--color-ink-faint);
+}
+
+.navCta {
+  background: var(--color-copper);
+  color: #fff;
+  border: none;
+  padding: 14px 26px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.navCta:hover {
+  transform: translateY(-2px);
+  background: var(--color-copper-dark);
+}
+
+.navSocials {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.navSocials a {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.navSocials a:hover {
+  color: var(--color-copper-light);
+}
+
+/* ── Desktop links ── */
+.links {
+  display: flex;
+  align-items: center;
+  gap: 38px;
+}
+
+.links a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
+}
+
+.links a:hover {
+  color: #fff;
+}
+
+@media (max-width: 540px) {
+  .navbar {
+    padding: 20px 18px 0;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .navBottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav, .navPanel, .navItem, .navMeta, .bar {
+    transition: none !important;
+  }
+}

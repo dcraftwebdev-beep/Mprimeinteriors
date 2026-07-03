@@ -1,0 +1,343 @@
+@property --angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.section {
+  position: relative;
+  width: 100%;
+  background: var(--color-canvas-soft);
+  padding: clamp(4.5rem, 9vw, 8rem) 1.5rem;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ================================================================
+   HEAD — big display heading + intro on the left, CTA pill aligned
+   top-right. Stacks on mobile.
+   ================================================================ */
+.head {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+      margin: 3.2rem 0 2.4rem;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  max-width: 640px;
+}
+
+.indexRow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 320px;
+}
+
+.indexLine {
+  flex: 1;
+  height: 1px;
+  background: var(--color-ink);
+  transform-origin: left;
+  transform: scaleX(0);
+  will-change: transform;
+}
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--color-matcha-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--color-ink);
+  text-align: left;
+  text-transform: none;
+}
+
+.title em {
+  font-style: normal !important;
+  color: var(--color-matcha-dark);
+}
+
+.intro {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+  text-align: left;
+}
+.headCta {
+  flex: none;
+  margin-top: 0.4rem;
+  will-change: transform, opacity;
+}
+
+/* ================================================================
+   CARD GRID — four equal cards. First + third are the featured dark
+   tiles (deep Matcha), the rest are light with a faint Matcha wash.
+   ================================================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 2vw, 2rem);
+  border-radius: 60px 0 60px 0;
+  background: rgba(128, 150, 113, 0.07); /* faint Matcha wash */
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+  min-height: 300px;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.cardFeatured {
+  background: var(--color-matcha-dark);
+  border-color: var(--color-matcha-dark);
+  color: #fff;
+}
+
+/* ----------------------------------------------------------------
+   CURTAIN — covers the card on load and slides off diagonally
+   (toward the sharp top-right corner) as the section scrolls into
+   view. Gives the scroll entrance its own identity, distinct from
+   the header's fade/slide-up.
+   ---------------------------------------------------------------- */
+.curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: var(--color-matcha-dark);
+  transform-origin: bottom left;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.cardFeatured .curtain {
+  background: var(--color-canvas-soft);
+}
+
+/* ----------------------------------------------------------------
+   SPARK — an animated conic-gradient ring, clipped down to just the
+   card's own border via a mask. Because it inherits border-radius,
+   it always traces the true outline: through the sharp corners and
+   both curved ones.
+
+   - Hover: loops continuously.
+   - Scroll reveal: fires once, triggered by the `sparkOnce` class
+     from ProcessSection.jsx as each curtain finishes clearing.
+   ---------------------------------------------------------------- */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--angle),
+    transparent 0deg,
+    transparent 250deg,
+    var(--color-matcha-dark) 296deg,
+    #f2ffe4 320deg,
+    var(--color-matcha-dark) 344deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.cardFeatured::after {
+  background: conic-gradient(
+    from var(--angle),
+    transparent 0deg,
+    transparent 250deg,
+    rgba(255, 255, 255, 0.35) 296deg,
+    #ffffff 320deg,
+    rgba(255, 255, 255, 0.35) 344deg,
+    transparent 360deg
+  );
+}
+
+.card:hover::after {
+  opacity: 1;
+  animation: spark-rotate 2.4s linear infinite;
+}
+
+.card.sparkOnce::after {
+  opacity: 1;
+  animation: spark-sweep 1.1s ease-out 1;
+}
+
+@keyframes spark-rotate {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes spark-sweep {
+  0% {
+    --angle: 0deg;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    --angle: 360deg;
+    opacity: 0;
+  }
+}
+
+.cardIcon {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 1.5rem;
+  color: var(--color-matcha-dark);
+}
+
+.cardFeatured .cardIcon {
+  color: #fff;
+}
+
+.cardIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cardName {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.7rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: inherit;
+}
+
+.cardText {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 1.6rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--color-ink-faint);
+}
+
+.cardFeatured .cardText {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* phase tag */
+.tag {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--color-matcha-dark);
+  color: #fff;
+}
+
+.cardFeatured .tag {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+:global(.splitChar) {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 980px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.4rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none !important;
+  }
+
+  .card::after,
+  .curtain {
+    display: none !important;
+  }
+}

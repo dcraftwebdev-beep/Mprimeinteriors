@@ -1,0 +1,297 @@
+.section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* was: linear-gradient(135deg, #f3f1ec 0%, #faf9f7 100%) — flat hardcoded cream.
+     Now: a quiet step down from the hero's Almond canvas, using global tokens,
+     so this section reads as "next chapter" rather than a repeat of the hero. */
+  background: linear-gradient(135deg, var(--color-canvas-soft) 0%, var(--color-canvas) 100%);
+  overflow: hidden;
+  padding: 4rem 1.5rem;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+}
+
+/* ---------- reveal animation ---------- */
+.reveal {
+  will-change: transform, opacity;
+}
+
+/* ---------- heading ----------
+   Replaced the billboard treatment (huge uppercase Fraunces + small italic
+   eyebrow) with a "spec-line" heading: a thin index rule, a tight display
+   title at a sane scale, and the sub-line set as a running annotation
+   beside it rather than stacked underneath at hero size. Reads like a
+   measured studio index card, not a landing-page hero repeated twice. */
+.head {
+  width: 100%;
+  max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.indexRow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 560px;
+}
+
+.indexLine {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+  transform-origin: center;
+  transform: scaleX(0);
+  will-change: transform;
+}
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--color-matcha-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--color-ink);
+  text-align: center;
+  text-transform: none;
+}
+
+.title em {
+  font-style: normal !important;
+  color: var(--color-matcha-dark);
+}
+
+/* ---------- card stage ---------- */
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  height: clamp(320px, 25vw, 580px);
+  margin: 3.2rem 0 2.4rem;
+  perspective: 1500px;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(120px, 14vw, 180px);
+  aspect-ratio: 3 / 4;
+  border-radius: clamp(14px, 1.6vw, 22px);
+  overflow: hidden;
+  background: var(--bg, var(--color-chai));
+  box-shadow: var(--shadow-lg);
+  will-change: transform;
+  transition: box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  z-index: 10;
+}
+
+.card:hover {
+  box-shadow: 0 36px 72px -12px rgba(58, 47, 31, 0.4);
+  transform: translateY(-4px);
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cardTag {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-ink);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(10px);
+}
+
+/* ---------- badges ---------- */
+/* was: hardcoded teal (#2bb0b5) and orange (#e8932e) gradients — neither
+   color exists anywhere in the Studio Fleur palette. Swapped to Matcha
+   and Chai, the two accent tones already established for CTAs/highlights,
+   so the badges feel native to this site rather than borrowed from
+   a different brand. */
+.badge {
+  position: absolute;
+  z-index: 40;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  will-change: transform, opacity;
+}
+
+.badge::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 22px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.badgeL {
+  left: 7%;
+  top: 4%;
+  background: linear-gradient(135deg, var(--color-matcha) 0%, var(--color-matcha-dark) 100%);
+}
+
+.badgeR {
+  right: 6%;
+  top: 0%;
+  background: linear-gradient(135deg, var(--color-chai) 0%, var(--color-chai-dark) 100%);
+  color: var(--color-carob-dark);
+}
+
+.badgeR::after {
+  left: auto;
+  right: 22px;
+}
+
+/* ---------- copy + cta ---------- */
+.copy {
+  max-width: 540px;
+  text-align: center;
+  color: var(--color-ink-soft);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  line-height: 1.65;
+  margin: 0 0 1.6rem;
+  will-change: transform, opacity;
+}
+
+/* .cta kept for backward compatibility — the component now uses the global
+   .btn-prime.btn-prime-dark classes directly, so this rule is unused unless
+   referenced elsewhere. Tokenized in case it's still wired up somewhere. */
+.cta {
+  background: linear-gradient(135deg, var(--color-ink) 0%, var(--color-carob-dark) 100%);
+  color: #fff;
+  border: none;
+  padding: 0.9rem 2.2rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: left 0.4s ease;
+}
+
+.cta:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta:hover::before {
+  left: 100%;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--color-matcha);
+  outline-offset: 3px;
+}
+
+/* ---------- sub heading ----------
+   Was a second bold display line stacked under the title (same visual
+   weight, doubling the "shout"). Now it's a quiet running annotation —
+   sits like a margin note, references the six disciplines actually
+   fanned out below rather than asserting scale with type size. */
+.sub {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-ink-faint);
+  letter-spacing: 0.01em;
+  will-change: transform, opacity;
+}
+
+.sub .count {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-ink-soft);
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 600px) {
+  .stage {
+    height: 300px;
+  }
+
+  .badgeL {
+    left: 2%;
+  }
+
+  .badgeR {
+    right: 2%;
+  }
+
+  .card {
+    width: 120px;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .card,
+  .badge,
+  .reveal {
+    transition: none !important;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

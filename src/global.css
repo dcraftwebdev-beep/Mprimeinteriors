@@ -1,0 +1,319 @@
+/* ================================================================
+   GLOBAL DESIGN SYSTEM — "Studio Fleur" palette
+   Fonts · Colors · Spacing · Radius · Shadows · Type Scale · Reset
+   ================================================================ */
+
+/* Outfit */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* Fraunces */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&display=swap');
+
+:root {
+
+  /* ---------- fonts ---------- */
+  /* Body, buttons, navigation */
+  --font-sans: 'Outfit', sans-serif;
+
+  /* Headings, hero titles */
+--font-display: 'Bodoni Moda', serif;
+  /* ---------- color · neutrals (canvas → ink) ---------- */
+  /* Studio Fleur palette mapping:
+     Almond  #E5E0D8 -> page background
+     Vanilla #E5D2B8 -> surface / card tint
+     Carob   #725C3A -> ink / primary text
+  */
+  --color-canvas: #e5e0d8;       /* Almond — page background */
+  --color-canvas-soft: #ded7c9;  /* slightly deeper Almond — section / alt background */
+  --color-surface: #ffffff;      /* cards, raised panels (keep white for max contrast w/ photos) */
+  --color-surface-warm: #efe4d3; /* Vanilla-tinted surface, for warmer cards/panels */
+  --color-border: #d8cfbd;       /* hairline, derived from Vanilla/Almond */
+  --color-ink: #3a2f1f;          /* darkened Carob — primary text / headings */
+  --color-brass: #9a7b4f;
+  --color-brass2: #211f18;
+  --color-ink-soft: #6b5d46;     /* secondary / body text, warm brown-grey */
+  --color-ink-faint: #a89c85;    /* placeholders, captions, disabled */
+
+  /* ---------- color · brand accents (Studio Fleur) ---------- */
+  --color-matcha: #809671;        /* primary accent — CTAs, links, active states */
+  --color-matcha-light: #9aab8c;
+  --color-matcha-dark: #647254;
+
+  --color-pistache: #b3b792;      /* tertiary accent — borders, dividers, badges */
+  --color-pistache-light: #c5c8a9;
+  --color-pistache-dark: #94997a;
+
+  --color-chai: #d2ab80;          /* secondary accent — highlights, tags, icons */
+  --color-chai-light: #e0c19c;
+  --color-chai-dark: #b88c5d;
+
+  --color-carob: #725c3a;         /* anchor / dark sections, footer bg */
+  --color-carob-light: #8a7350;
+  --color-carob-dark: #564429;
+
+  --color-vanilla: #e5d2b8;       /* warm surface tint */
+  --color-almond: #e5e0d8;        /* base canvas */
+
+  /* legacy aliases kept for backward compatibility with existing components */
+  --color-navy: #1c2b45;
+  --color-navy-light: #2c3f60;
+  --color-navy-dark: #101a2c;
+
+  --color-copper: #cf8a4d;
+  --color-copper-light: #e0a86e;
+  --color-copper-dark: #a86c38;
+
+  /* ---------- color · semantic ---------- */
+  --color-success: #4caf6d;
+  --color-error: #d6543f;
+  --color-warning: #e8a33d;
+  --color-info: #3c8ddb;
+
+  /* ---------- spacing scale (4px base) ---------- */
+  --space-1: 0.25rem;   /* 4px  */
+  --space-2: 0.5rem;    /* 8px  */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 3rem;      /* 48px */
+  --space-8: 4rem;      /* 64px */
+  --space-9: 6rem;      /* 96px */
+  --space-10: 8rem;     /* 128px */
+
+  /* fluid section padding — use on any <section> wrapper */
+  --section-padding-x: clamp(1.25rem, 5vw, 4rem);
+  --section-padding-y: clamp(3rem, 8vw, 6rem);
+
+  /* ---------- radius ---------- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+
+  /* ---------- shadows ---------- */
+  --shadow-sm: 0 4px 12px -4px rgba(58, 47, 31, 0.12);
+  --shadow-md: 0 16px 36px -10px rgba(58, 47, 31, 0.22);
+  --shadow-lg: 0 28px 60px -18px rgba(58, 47, 31, 0.30);
+
+  /* ---------- fluid type scale ---------- */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.05rem, 1.3vw, 1.2rem);
+  --text-xl: clamp(1.4rem, 2vw, 1.8rem);
+  --text-2xl: clamp(1.8rem, 3vw, 2.6rem);
+  --text-3xl: clamp(2.6rem, 5vw, 4rem);
+  --text-4xl: clamp(3.2rem, 9vw, 6.5rem);
+}
+
+/* ================================================================
+   RESET
+   ================================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+
+/* Fraunces' italic is its signature "soft luxury" feel —
+   use font-style: italic on eyebrows / display copy. */
+
+p {
+  color: var(--color-ink-soft);
+  line-height: 1.65;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  color: inherit;
+}
+
+button { cursor: pointer; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--color-matcha);
+  color: #fff;
+}
+
+/* ================================================================
+   LAYOUT UTILITIES
+   ================================================================ */
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--section-padding-x);
+}
+
+.section {
+  padding-block: var(--section-padding-y);
+  padding-inline: var(--section-padding-x);
+}
+
+.section-dark {
+  background: var(--color-carob);
+  color: var(--color-vanilla);
+}
+.section-dark h1, .section-dark h2, .section-dark h3 { color: var(--color-almond); }
+.section-dark p { color: var(--color-vanilla); opacity: 0.85; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-ink);
+  color: #fff;
+  border: none;
+  padding: 0.9rem 2.2rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+.btn:hover { transform: translateY(-2px); background: #000; }
+.btn:focus-visible { outline: 2px solid var(--color-matcha); outline-offset: 3px; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-border);
+}
+.btn-outline:hover { background: var(--color-canvas-soft); }
+
+/* ================================================================
+   BUTTONS — M Prime variants (arrow-icon CTA system)
+   Usage: <button className="btn-prime btn-prime-matcha">
+            <span>Label</span>
+            <span className="btn-prime-icon"><svg>...</svg></span>
+          </button>
+   Variants: btn-prime-dark, btn-prime-matcha, btn-prime-carob,
+             btn-prime-chai, btn-prime-outline, btn-prime-ghost
+   ================================================================ */
+
+.btn-prime {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.65rem 0.6rem 0.65rem 1.9rem;
+  border-radius: var(--radius-full);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.btn-prime:hover { transform: translateY(-2px); }
+.btn-prime:focus-visible { outline: 2px solid var(--color-matcha); outline-offset: 3px; }
+
+.btn-prime-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.8em;
+  height: 2.8em;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-prime-icon svg { width: 50%; height: 50%; }
+.btn-prime:hover .btn-prime-icon { transform: translateX(3px); }
+
+/* ---- fill variants ---- */
+.btn-prime-dark { background: var(--color-ink); color: #fff; }
+.btn-prime-dark:hover { background: #000; }
+.btn-prime-dark .btn-prime-icon { background: rgba(255, 255, 255, 0.15); }
+.btn-prime-dark .btn-prime-icon svg { fill: #fff; }
+
+/* primary accent — Matcha */
+.btn-prime-matcha { background: var(--color-matcha); color: #fff; }
+.btn-prime-matcha:hover { background: var(--color-matcha-dark); }
+.btn-prime-matcha .btn-prime-icon { background: rgba(255, 255, 255, 0.2); }
+.btn-prime-matcha .btn-prime-icon svg { fill: #fff; }
+
+/* anchor / dark — Carob */
+.btn-prime-carob { background: var(--color-carob); color: #fff; }
+.btn-prime-carob:hover { background: var(--color-carob-dark); }
+.btn-prime-carob .btn-prime-icon { background: rgba(255, 255, 255, 0.15); }
+.btn-prime-carob .btn-prime-icon svg { fill: #fff; }
+
+/* secondary accent — Chai */
+.btn-prime-chai { background: var(--color-chai); color: var(--color-carob-dark); }
+.btn-prime-chai:hover { background: var(--color-chai-dark); }
+.btn-prime-chai .btn-prime-icon { background: rgba(58, 47, 31, 0.15); }
+.btn-prime-chai .btn-prime-icon svg { fill: var(--color-carob-dark); }
+
+.btn-prime-outline {
+  background: transparent;
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-border);
+  padding-left: 1.6rem;
+}
+.btn-prime-outline:hover { background: var(--color-canvas-soft); }
+.btn-prime-outline .btn-prime-icon { background: var(--color-canvas-soft); }
+.btn-prime-outline .btn-prime-icon svg { fill: var(--color-ink); }
+
+.btn-prime-ghost {
+  background: transparent;
+  color: var(--color-ink);
+  padding-left: 0;
+}
+.btn-prime-ghost .btn-prime-icon { background: var(--color-ink); color: #fff; }
+.btn-prime-ghost .btn-prime-icon svg { fill: #fff; }
+.btn-prime-ghost:hover { color: var(--color-matcha); }
+.btn-prime-ghost:hover .btn-prime-icon { background: var(--color-matcha); }
+.btn-prime-ghost:hover .btn-prime-icon svg { fill: #fff; }
+
+/* ================================================================
+   PALETTE UTILITY CLASSES — quick reference / swatches
+   ================================================================ */
+.swatch-matcha   { background: var(--color-matcha); }
+.swatch-pistache { background: var(--color-pistache); }
+.swatch-chai     { background: var(--color-chai); }
+.swatch-carob    { background: var(--color-carob); }
+.swatch-vanilla  { background: var(--color-vanilla); }
+.swatch-almond   { background: var(--color-almond); }
