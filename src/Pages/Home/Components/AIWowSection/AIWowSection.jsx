@@ -14,8 +14,54 @@ const STYLES = [
   { key: "silence",    label: "Silence",    note: "Quiet tones, nothing extra." },
 ];
 
-const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_BYTES = 15 * 1024 * 1024; // accept the original file up to this size — we compress it down below
+const COMPRESS_MAX_DIM = 1600;      // longest edge, in px, after compression
+const COMPRESS_QUALITY = 0.85;      // JPEG quality
 const REVEAL_POS = 52; // where the result's before/after settles after its reveal sweep
+
+// Vercel serverless functions cap request bodies at ~4.5MB — a hard
+// platform limit, not something our own code controls. Phone photos are
+// routinely 5–15MB, so instead of asking the user to pre-shrink their
+// own photo, we resize + recompress it in the browser before it's ever
+// sent. This runs on a canvas and returns a JPEG File well under the
+// limit for virtually any input photo.
+function compressImage(file, maxDim = COMPRESS_MAX_DIM, quality = COMPRESS_QUALITY) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        if (width >= height) {
+          height = Math.round((height / width) * maxDim);
+          width = maxDim;
+        } else {
+          width = Math.round((width / height) * maxDim);
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) { reject(new Error("Could not process that image.")); return; }
+          resolve(new File([blob], "room.jpg", { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not read that image file."));
+    };
+    img.src = url;
+  });
+}
 
 export default function AIWowSection() {
   const root = useRef(null);
@@ -74,7 +120,7 @@ export default function AIWowSection() {
     };
   }, []);
 
-  const handleFile = useCallback((f) => {
+  const handleFile = useCallback(async (f) => {
     if (!f) return;
     if (!f.type.startsWith("image/")) {
       setErrorMsg("Please upload an image file.");
@@ -82,18 +128,28 @@ export default function AIWowSection() {
       return;
     }
     if (f.size > MAX_BYTES) {
-      setErrorMsg("Please upload a photo under 10MB.");
+      setErrorMsg("Please upload a photo under 15MB.");
       setPhase("error");
       return;
     }
-    setFile(f);
-    setPreviewUrl((old) => {
-      if (old) URL.revokeObjectURL(old);
-      return URL.createObjectURL(f);
-    });
-    setResultUrl(null);
-    setPhase("uploaded");
+
+    setPhase("compressing");
     setErrorMsg("");
+    try {
+      // Resize + recompress so the upload reliably fits under Vercel's
+      // ~4.5MB request-body limit, regardless of the original photo size.
+      const compressed = await compressImage(f);
+      setFile(compressed);
+      setPreviewUrl((old) => {
+        if (old) URL.revokeObjectURL(old);
+        return URL.createObjectURL(compressed);
+      });
+      setResultUrl(null);
+      setPhase("uploaded");
+    } catch (err) {
+      setErrorMsg(err.message || "Could not process that photo. Try a different one.");
+      setPhase("error");
+    }
   }, []);
 
   const onDrop = (e) => {
@@ -112,10 +168,23 @@ export default function AIWowSection() {
       formData.append("style", style);
 
       const res = await fetch("/api/room-redesign", { method: "POST", body: formData });
-      const data = await res.json();
 
-      if (!res.ok || !data.image) {
-        throw new Error(data.error || "Something went wrong. Please try again.");
+      // A 413 (or other platform-level rejection) comes back from Vercel
+      // itself as plain text, not our handler's JSON — guard against that
+      // instead of letting res.json() throw a confusing parse error.
+      let data = null;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+
+      if (!res.ok || !data?.image) {
+        const fallback =
+          res.status === 413
+            ? "That photo is still too large for the server to accept. Try a different photo."
+            : `Something went wrong (${res.status}). Please try again.`;
+        throw new Error(data?.error || fallback);
       }
 
       setResultUrl(data.image);
@@ -223,13 +292,15 @@ function UploadStage({
         {previewUrl ? (
           <>
             <img src={previewUrl} alt="Your uploaded room" className={styles.dropPreview} />
-            {phase === "loading" && (
-              <div className={styles.scanOverlay} aria-live="polite" aria-label="Designing your room">
+            {(phase === "loading" || phase === "compressing") && (
+              <div className={styles.scanOverlay} aria-live="polite" aria-label={phase === "compressing" ? "Preparing your photo" : "Designing your room"}>
                 <div className={styles.scanLine} />
-                <span className={styles.scanText}>Designing your room…</span>
+                <span className={styles.scanText}>
+                  {phase === "compressing" ? "Preparing your photo…" : "Designing your room…"}
+                </span>
               </div>
             )}
-            {phase !== "loading" && (
+            {phase !== "loading" && phase !== "compressing" && (
               <button
                 type="button"
                 className={styles.swapBtn}
@@ -248,7 +319,7 @@ function UploadStage({
               </svg>
             </span>
             <span className={styles.dropTitle}>Drop a photo of your room</span>
-            <span className={styles.dropSub}>or click to browse — JPG or PNG, under 10MB</span>
+            <span className={styles.dropSub}>or click to browse — any size, we'll resize it automatically</span>
           </div>
         )}
 
@@ -270,7 +341,7 @@ function UploadStage({
               type="button"
               className={`${styles.chip} ${style === s.key ? styles.chipOn : ""}`}
               onClick={() => setStyle(s.key)}
-              disabled={phase === "loading"}
+              disabled={phase === "loading" || phase === "compressing"}
               aria-pressed={style === s.key}
             >
               <span className={styles.chipLabel}>{s.label}</span>
@@ -287,10 +358,12 @@ function UploadStage({
           type="button"
           className={`btn-prime btn-prime-matcha ${styles.submitBtn}`}
           onClick={submit}
-          disabled={!previewUrl || phase === "loading"}
+          disabled={!previewUrl || phase === "loading" || phase === "compressing"}
         >
-          <span>{phase === "loading" ? "Designing…" : "Redesign My Room"}</span>
-          {phase !== "loading" && (
+          <span>
+            {phase === "loading" ? "Designing…" : phase === "compressing" ? "Preparing…" : "Redesign My Room"}
+          </span>
+          {phase !== "loading" && phase !== "compressing" && (
             <span className="btn-prime-icon" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                 <path d="M100,44.896V55.104H94.82449A27.66327,27.66327,0,0,0,68.22692,81.70112v5.104H58.01937v-5.104A37.41244,37.41244,0,0,1,69.95209,55.104H.08V44.896H69.95209A37.41244,37.41244,0,0,1,58.01937,18.29888v-5.104H68.22692v5.104A27.67577,27.67577,0,0,0,94.89644,44.896Z" />
@@ -303,7 +376,7 @@ function UploadStage({
           Your photo is used only to generate this preview — it isn&apos;t stored.
         </p>
 
-        {previewUrl && phase !== "loading" && (
+        {previewUrl && phase !== "loading" && phase !== "compressing" && (
           <button type="button" className={styles.resetLink} onClick={startOver}>
             Start over
           </button>
